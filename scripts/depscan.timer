@@ -1,0 +1,14 @@
+[Unit]
+Description=Run the dependency vulnerability scan daily
+Documentation=https://osv.dev
+
+[Timer]
+# 07:30 local time every day.
+OnCalendar=*-*-* 07:30:00
+# If the machine was asleep at 07:30, run once it wakes rather than skipping.
+Persistent=true
+# Spread the load so every machine does not hit OSV on the same second.
+RandomizedDelaySec=15m
+
+[Install]
+WantedBy=timers.target

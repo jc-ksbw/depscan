@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "depscan"
+version = "1.0.0"
+description = "Scan a folder of projects for vulnerable and outdated dependencies"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+keywords = ["security", "sbom", "vulnerability", "dependencies", "supply-chain"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Security",
+]
+# No runtime dependencies, on purpose: a tool that polices your supply chain
+# should not widen it. Python 3.11+ is required for tomllib in the stdlib.
+dependencies = []
+
+[project.scripts]
+depscan = "depscan.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["depscan*"]
+
+[tool.setuptools.package-data]
+depscan = ["*.toml"]

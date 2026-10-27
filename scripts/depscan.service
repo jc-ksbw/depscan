@@ -1,0 +1,24 @@
+# systemd service unit (Linux). Install as a *user* unit:
+#   mkdir -p ~/.config/systemd/user
+#   cp scripts/depscan.service scripts/depscan.timer ~/.config/systemd/user/
+#   # edit the paths below first
+#   systemctl --user daemon-reload
+#   systemctl --user enable --now depscan.timer
+#   systemctl --user list-timers depscan.timer     # confirm the next run
+#   journalctl --user -u depscan.service           # read the last run
+
+[Unit]
+Description=Daily dependency vulnerability scan
+Documentation=https://osv.dev
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+# EDIT THESE TWO LINES
+WorkingDirectory=%h/depscan
+ExecStart=%h/depscan/scripts/depscan-daily.sh %h/projects %h/depscan-reports
+# A non-zero exit means findings, not a broken unit.
+SuccessExitStatus=0 1
+Nice=10
+IOSchedulingClass=idle

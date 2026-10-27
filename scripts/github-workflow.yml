@@ -1,0 +1,48 @@
+# Optional: run the same scan in CI against a single repository.
+# Copy this to .github/workflows/depscan.yml in the repo you want watched.
+#
+# This complements the local daily run rather than replacing it: CI sees one
+# repository, your own machine sees every folder you actually have checked out.
+
+name: Dependency scan
+
+on:
+  schedule:
+    - cron: "37 6 * * *"   # 06:37 UTC daily; an off-the-hour minute avoids the rush
+  workflow_dispatch:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  depscan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install depscan
+        run: pip install "git+https://github.com/jc-ksbw/depscan@main"
+
+      - name: Scan this repository
+        run: |
+          depscan scan \
+            --root "$GITHUB_WORKSPACE" \
+            --out-dir "$RUNNER_TEMP/depscan-reports" \
+            --format markdown --format json \
+            --fail-on critical \
+            --no-color
+
+      - name: Publish the report to the job summary
+        if: always()
+        run: cat "$RUNNER_TEMP/depscan-reports/scan-latest.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: depscan-report
+          path: ${{ runner.temp }}/depscan-reports/

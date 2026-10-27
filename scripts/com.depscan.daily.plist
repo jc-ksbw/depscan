@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- launchd agent (macOS).
+       cp scripts/com.depscan.daily.plist ~/Library/LaunchAgents/
+       # edit the paths below first
+       launchctl load ~/Library/LaunchAgents/com.depscan.daily.plist
+       launchctl list | grep depscan
+     Unload with: launchctl unload ~/Library/LaunchAgents/com.depscan.daily.plist -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.depscan.daily</string>
+  <key>ProgramArguments</key>
+  <array>
+    <!-- EDIT: absolute paths, launchd has almost no PATH -->
+    <string>/Users/YOU/depscan/scripts/depscan-daily.sh</string>
+    <string>/Users/YOU/projects</string>
+    <string>/Users/YOU/depscan-reports</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key><integer>7</integer>
+    <key>Minute</key><integer>30</integer>
+  </dict>
+  <!-- Run at the next opportunity if the Mac was asleep at 07:30. -->
+  <key>RunAtLoad</key>
+  <false/>
+  <key>StandardOutPath</key>
+  <string>/Users/YOU/depscan-reports/launchd.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/YOU/depscan-reports/launchd.log</string>
+  <key>LowPriorityIO</key>
+  <true/>
+</dict>
+</plist>

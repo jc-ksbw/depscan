@@ -1,0 +1,65 @@
+# depscan configuration
+#
+# Copy to depscan.toml (next to where you run depscan) or to
+# ~/.config/depscan/config.toml, and the daily job becomes a bare
+# `depscan scan` with no arguments.
+
+[scan]
+# THE ONE SETTING THAT MATTERS: the folder that holds all your project
+# folders. Every immediate subdirectory is treated as a separate program, so
+# adding or removing a project needs no config change.
+root = "~/projects"
+
+# Directory names to skip, on top of the built-in list (node_modules, .venv,
+# .git, build, dist, target, __pycache__ and friends).
+exclude = ["archive", "experiments"]
+
+# How deep to walk inside each project before giving up.
+max_depth = 8
+
+# Read site-packages and node_modules to see what is *actually installed*,
+# not just what the manifests ask for. Set false for a faster manifest-only run.
+include_installed = true
+
+# Follow symlinks. Off by default: a symlink loop will hang a nightly job.
+follow_symlinks = false
+
+# Also ask PyPI / npm / crates.io for the newest release of each package, which
+# flags both stale pins and names that no longer exist on the registry.
+# Off by default because it costs one request per unique package.
+check_updates = false
+
+# Where downloaded advisories are cached. Defaults to ~/.cache/depscan.
+# cache_dir = "~/.cache/depscan"
+
+[report]
+output_dir = "~/depscan-reports"
+
+# Run-to-run state. This is what makes "new since the last run" work, so the
+# daily mail is 3 new findings rather than the same 300 every morning.
+state_file = "~/depscan-reports/.depscan-state.json"
+
+# markdown | html | json | csv | cyclonedx
+formats = ["markdown", "html", "json"]
+
+# Exit non-zero at this severity or worse: critical | high | medium | low | never.
+# Cron mails you the output when a job exits non-zero, which is the whole
+# notification mechanism you need to start with.
+fail_on = "high"
+
+# Optional: POST a JSON summary when the scan finishes. The payload has a
+# top-level "text" field, so a Slack or Teams incoming webhook renders it.
+# webhook_url = "https://hooks.slack.com/services/XXX/YYY/ZZZ"
+
+# ---------------------------------------------------------------------------
+# Accepted risks. Each rule hides one finding. Always set `expires` so a
+# decision gets revisited instead of becoming permanent and forgotten --
+# after that date the finding comes back on its own.
+# ---------------------------------------------------------------------------
+
+# [[ignore]]
+# id = "GHSA-xxxx-xxxx-xxxx"
+# package = "requests"          # optional: only this package
+# project = "api-service"       # optional: only this project
+# reason = "Not reachable: we never pass a proxy URL. Revisit at the Q1 upgrade."
+# expires = "2027-03-31"

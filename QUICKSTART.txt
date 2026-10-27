@@ -1,0 +1,97 @@
+depscan - quick start
+=====================
+
+WHAT THIS DOES
+  You point it at the one folder that holds all your project folders. It finds
+  every third-party package, GitHub Action and container image your projects
+  pull in, checks each one against published security advisories, and tells you
+  what to fix first.
+
+
+WHAT YOU NEED
+  Python 3.11 or newer. Nothing else - no accounts, no API keys, no other
+  packages to install. Check what you have by opening a terminal and running:
+
+      python3 --version
+
+  If you do not have it, get it from https://www.python.org/downloads/
+  (on Windows, tick "Add python.exe to PATH" during setup).
+
+
+START IT - the easy way
+  macOS    Double-click  "Start depscan (macOS).command"
+           The first time, macOS will refuse because the file came from the
+           internet. Right-click it, choose Open, then confirm. Once only.
+
+  Windows  Double-click  "Start depscan (Windows).bat"
+
+  Linux    Run  ./start-depscan-linux.sh
+
+  Your browser opens with the interface. Leave the black terminal window open
+  while you use it - that window IS the program. Closing it stops depscan.
+
+
+START IT - from a terminal
+      cd <this folder>
+      python3 -m depscan gui
+
+  Or install it properly so `depscan` works from anywhere:
+
+      pip install .
+      depscan gui
+
+
+USING IT
+  1. Pick the folder that holds all your project folders. Use Browse if you
+     would rather click than type. Folders that look like projects are marked.
+
+         ~/projects/            <- point depscan HERE
+           budget-game/
+           invoice-tool/
+           client-work/
+
+  2. Click "Run scan". The first run takes a few seconds per project while it
+     downloads advisory data; later runs are much faster because that data is
+     cached on your machine.
+
+  3. Read the results worst-first. Anything tagged "Exploited in the wild" is
+     in CISA's catalogue of vulnerabilities being used in real attacks right
+     now - fix those before anything else, whatever the severity score says.
+
+  4. Download the report as Markdown, HTML or JSON from the buttons.
+
+  "Build inventory instead" answers the other question: what am I running, and
+  where did it come from? It lists every package with its version, origin and
+  the file that declares it, and writes a CycloneDX SBOM that other security
+  tools and auditors can read.
+
+
+RUNNING IT EVERY DAY
+  Open the "Run it daily" tab. It shows the exact command for your system -
+  cron, Windows Task Scheduler, systemd or launchd - with a Copy button.
+
+  The daily run reports what is NEW since the last run, so you get "3 new
+  findings" rather than the same 300 every morning.
+
+
+WHERE THE SECURITY DATA COMES FROM
+  OSV.dev        the advisory database, run by Google's Open Source Security
+                 Team. It aggregates the GitHub Advisory Database, PyPA,
+                 RustSec, the Go vulnerability database and ~20 others.
+  CISA KEV       the US government's catalogue of vulnerabilities seen being
+                 exploited in real attacks.
+  FIRST EPSS     a daily-updated probability that each flaw gets exploited.
+
+  All free, all public, no account needed. Run `python3 -m depscan sources`
+  for the full explanation, including why NVD is not used directly.
+
+
+PRIVACY
+  Nothing is uploaded. The only thing that leaves your machine is a list of
+  package names and version numbers, sent to those public advisory APIs so
+  they can be looked up. Your code is never read for content, never
+  transmitted, and never stored anywhere but your own disk.
+
+
+FULL DOCUMENTATION
+  See README.md.

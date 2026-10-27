@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# depscan's own output and local settings
+depscan.toml
+depscan-reports/
+.depscan-state.json
